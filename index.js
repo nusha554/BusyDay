@@ -1,5 +1,18 @@
-const axios = require("axios");
+// Publish your code as npm package and run it with npx
+// Add colors to your cli tool    DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Add Inquirer.js and make you cli tool interactive
+// Display pokemon image (ascii art) DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+//   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${}.png`
 const fs = require("fs");
+const axios = require("axios");
+const Image = require("ascii-art-image");
+const color = require("colors-cli/safe");
+const errorColor = color.red.bold;
+const addedColor = color.green.bold;
+const menuColor = color.blue.bold;
+const listColor = color.magenta.bold;
+const deletedColor = color.yellow.bold;
 
 const args = process.argv;
 
@@ -29,7 +42,8 @@ const getPokemon = async (pokemonId) => {
 
     const pokemonName = await response.data;
     return pokemonName.name;
-  } catch (error) {}
+  } catch (error) {
+  }
 };
 
 const getHelpInfo = () => {
@@ -39,7 +53,7 @@ $ node index.js add "todo item"  # Add a new todo
 $ node index.js get               # Show remaining todos
 $ node index.js delete NUMBER       # Delete a todo`;
 
-  console.log(UsageText);
+  console.log(menuColor(UsageText));
 };
 
 const getAllToDo = () => {
@@ -60,11 +74,22 @@ const getAllToDo = () => {
   });
 
   if (filterData.length === 0) {
-    console.log("There are no pending todos!");
+    console.log(errorColor("There are no pending todos!"));
   }
   for (let i = 0; i < filterData.length; i++) {
-    console.log(filterData.length - i + ". " + filterData[i]);
+    console.log(listColor(filterData.length - i + ". " + filterData[i]));
   }
+};
+
+const displayAsciiArt = (pokemonID) => {
+  var image = new Image({
+    filepath: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonID}.png`,
+    alphabet: "variant4",
+  });
+
+  image.write(function (err, rendered) {
+    console.log(rendered);
+  });
 };
 
 const addNewToDo = async () => {
@@ -75,35 +100,42 @@ const addNewToDo = async () => {
     //if is number, add as pokemon catch
     if (isPokemon) {
       const pokemonName = await fetchFromApi(Number(newTask));
-      pokemonFileData =
-        typeof pokemonName !== "undefined"
-          ? `Catch ${pokemonName}`
-          : `Oops! Such pokemon was not found yet...`;
-      //console.log(pokemonFileData);
+      // pokemonFileData =
+      //   typeof pokemonName !== "undefined"
+      //     ? `Catch ${pokemonName}`
+      //     : `Oops! Such pokemon was not found yet...`;
+      // displayAsciiArt(Number(newTask));
+
+      if (typeof pokemonName !== "undefined") {
+        pokemonFileData = `Catch ${pokemonName}`;
+        displayAsciiArt(Number(newTask));
+      } else {
+        pokemonFileData = `Oops! Such pokemon was not found yet...`;
+      }
     }
-    // Read the data from file todo.txt and convert it in string
 
     const fileData = fs
       .readFileSync(currentWorkingDirectory + "todo.txt")
       .toString();
 
     const newTodoToAdd = isPokemon ? pokemonFileData : newTask;
+
     // New task is added to previous data
     fs.writeFile(
       currentWorkingDirectory + "todo.txt",
-      newTodoToAddnewTodoToAdd + "\n" + fileData,
+      newTodoToAdd + "\n" + fileData,
 
       function (err) {
         // Handle if there is any error
         if (err) throw err;
 
         // Logs the new task added
-        console.log('Added todo: "' + newTask + '"');
+        console.log(addedColor('Added todo: "' + newTask + '"'));
       }
     );
   } else {
     // If argument was no passed
-    console.log("Error: Missing todo string." + " Nothing added!");
+    console.log(errorColor("Error: Missing todo string." + " Nothing added!"));
   }
 };
 
@@ -132,7 +164,9 @@ const deleteToDo = () => {
     // or less than zero
     if (deleteIndex > filterData.length || deleteIndex <= 0) {
       console.log(
-        "Error: todo #" + deleteIndex + " does not exist. Nothing deleted."
+        errorColor(
+          "Error: todo #" + deleteIndex + " does not exist. Nothing deleted."
+        )
       );
     } else {
       // Remove the task
@@ -148,13 +182,13 @@ const deleteToDo = () => {
         function (err) {
           if (err) throw err;
           // Logs the deleted index
-          console.log("Deleted todo #" + deleteIndex);
+          console.log(deletedColor("Todo #" + deleteIndex + " was deleted successfully!"));
         }
       );
     }
   } else {
     // Index argument was no passed
-    console.log("Error: Missing NUMBER for deleting todo.");
+    console.log(errorColor("Error: Missing NUMBER for deleting todo."));
   }
 };
 
