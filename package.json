@@ -20,6 +20,7 @@
     "ascii-art": "^2.8.5",
     "axios": "^0.27.2",
     "cross-fetch": "^3.1.5",
+    "inquirer": "^8.2.4",
     "node-fetch": "^3.2.5"
   },
   "devDependencies": {
