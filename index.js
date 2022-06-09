@@ -1,5 +1,3 @@
-
-
 const fs = require("fs");
 const axios = require("axios");
 const Image = require("ascii-art-image");
@@ -17,9 +15,11 @@ const args = process.argv;
 // The "index.js" is 8 characters long so -8 removes last 8 characters
 const currentWorkingDirectory = args[1].slice(0, -8);
 
-if (fs.existsSync(currentWorkingDirectory + "todo.txt") === false) {
+if (!fs.existsSync(currentWorkingDirectory + "todo.txt")) {
   let createStream = fs.createWriteStream("todo.txt");
   createStream.end();
+  console.log(errorColor("There are no pending todos!"));
+  process.exit(1);
 }
 
 const showInteractiveMenu = () => {
@@ -59,7 +59,11 @@ const showInteractiveMenu = () => {
             console.log(error);
           });
       } else if (answers.menu === "Show all notes") {
-        console.log(personalMessageColor(`Hey, ${answers.name}! Those are all your notes for now:`));
+        console.log(
+          personalMessageColor(
+            `Hey, ${answers.name}! Those are all your notes for now:`
+          )
+        );
         getAllToDo();
       } else if (answers.menu === "Delete note") {
         inquirer
@@ -77,7 +81,11 @@ const showInteractiveMenu = () => {
             console.log(error);
           });
       } else if (answers.menu === "Show menu") {
-        console.log(personalMessageColor(`Hey, ${answers.name}! Please choose one of the following:`));
+        console.log(
+          personalMessageColor(
+            `Hey, ${answers.name}! Please choose one of the following:`
+          )
+        );
         getHelpInfo();
       } else {
       }
@@ -129,7 +137,6 @@ const getAllToDo = () => {
   const fileData = fs
     .readFileSync(currentWorkingDirectory + "todo.txt")
     .toString();
-
 
   data = fileData.split("\n");
   let filterData = data.filter(function (value) {
