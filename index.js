@@ -18,8 +18,6 @@ const currentWorkingDirectory = args[1].slice(0, -8);
 if (!fs.existsSync(currentWorkingDirectory + "todo.txt")) {
   let createStream = fs.createWriteStream("todo.txt");
   createStream.end();
-  console.log(errorColor("There are no pending todos!"));
-  process.exit(1);
 }
 
 const showInteractiveMenu = () => {
@@ -133,6 +131,10 @@ const getAllToDo = () => {
   // Create a empty array
   let data = [];
 
+  if (!fs.existsSync(currentWorkingDirectory + "todo.txt")) {
+    console.log(errorColor("There are no pending todos!"));
+    return;
+  }
   // Read from todo.txt and convert it into a string
   const fileData = fs
     .readFileSync(currentWorkingDirectory + "todo.txt")
