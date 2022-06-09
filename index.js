@@ -1,7 +1,4 @@
-// Publish your code as npm package and run it with npx
-// Add colors to your cli tool    DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// Add Inquirer.js and make you cli tool interactive
-// Display pokemon image (ascii art) DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 const fs = require("fs");
 const axios = require("axios");
@@ -13,6 +10,7 @@ const addedColor = color.green.bold;
 const menuColor = color.blue.bold;
 const listColor = color.magenta.bold;
 const deletedColor = color.yellow.bold;
+const personalMessageColor = color.green_b.bold;
 
 const args = process.argv;
 
@@ -51,7 +49,7 @@ const showInteractiveMenu = () => {
             {
               type: "input",
               name: "new_note",
-              message: "Please enter the note:",
+              message: `So, ${answers.name}, what's on your mind?`,
             },
           ])
           .then((answers) => {
@@ -61,6 +59,7 @@ const showInteractiveMenu = () => {
             console.log(error);
           });
       } else if (answers.menu === "Show all notes") {
+        console.log(personalMessageColor(`Hey, ${answers.name}! Those are all your notes for now:`));
         getAllToDo();
       } else if (answers.menu === "Delete note") {
         inquirer
@@ -68,7 +67,7 @@ const showInteractiveMenu = () => {
             {
               type: "input",
               name: "delete",
-              message: "Which note to delete?",
+              message: `So, ${answers.name}, which note to delete?`,
             },
           ])
           .then((answers) => {
@@ -78,6 +77,7 @@ const showInteractiveMenu = () => {
             console.log(error);
           });
       } else if (answers.menu === "Show menu") {
+        console.log(personalMessageColor(`Hey, ${answers.name}! Please choose one of the following:`));
         getHelpInfo();
       } else {
       }
@@ -130,10 +130,8 @@ const getAllToDo = () => {
     .readFileSync(currentWorkingDirectory + "todo.txt")
     .toString();
 
-  // Split the string and store into array
-  data = fileData.split("\n");
 
-  // Filter the string for any empty lines in the file
+  data = fileData.split("\n");
   let filterData = data.filter(function (value) {
     return value !== "";
   });
